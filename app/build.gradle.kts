@@ -14,7 +14,7 @@ android {
         applicationId = "com.simpleweather.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 3
+        versionCode = 5
         versionName = "1.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -26,7 +26,7 @@ android {
         create("prerelease") {
             initWith(getByName("debug"))
             applicationIdSuffix = ".prerelease"
-            versionNameSuffix = "-prerelease.3"
+            versionNameSuffix = "-prerelease.5"
             isDebuggable = false
             signingConfig = signingConfigs.getByName("debug")
             matchingFallbacks += listOf("debug")

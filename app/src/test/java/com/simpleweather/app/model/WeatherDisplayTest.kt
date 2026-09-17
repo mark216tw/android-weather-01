@@ -47,8 +47,8 @@ class WeatherDisplayTest {
     }
 
     @Test fun `maps moon phase and US AQI labels`() {
-        assertEquals("🌑 新月", moonPhaseLabel(0.0))
-        assertEquals("🌕 滿月", moonPhaseLabel(0.5))
+        assertEquals("新月", moonPhaseLabel(0.0))
+        assertEquals("滿月", moonPhaseLabel(0.5))
         assertEquals("50 · 良好", aqiLabel(50))
         assertEquals("151 · 不健康", aqiLabel(151))
     }

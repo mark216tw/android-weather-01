@@ -21,20 +21,20 @@ import java.time.Instant
 import kotlinx.coroutines.delay
 
 private val LightColors = lightColorScheme(
-    primary = Color(0xFF075D83),
+    primary = Color(0xFF087FA3),
     onPrimary = Color.White,
-    background = Color(0xFFEAF5FA),
+    background = Color(0xFFEDF6FA),
     onBackground = Color(0xFF143247),
-    surface = Color(0xFFF8FCFE),
+    surface = Color(0xFFFFFFFF),
     onSurface = Color(0xFF143247),
 )
 
 private val DarkColors = darkColorScheme(
-    primary = Color(0xFF73C9EC),
+    primary = Color(0xFF58CAE9),
     onPrimary = Color(0xFF003549),
-    background = Color(0xFF09131F),
+    background = Color(0xFF0A1426),
     onBackground = Color(0xFFE7F3FA),
-    surface = Color(0xFF172633),
+    surface = Color(0xFF182842),
     onSurface = Color(0xFFE7F3FA),
 )
 

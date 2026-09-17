@@ -28,14 +28,14 @@ fun WeatherBundle.timezoneLabel(instant: Instant): String {
 
 fun moonPhaseLabel(value: Double?): String = when {
     value == null -> "--"
-    value < 0.03 || value >= 0.97 -> "🌑 新月"
-    value < 0.22 -> "🌒 眉月"
-    value < 0.28 -> "🌓 上弦月"
-    value < 0.47 -> "🌔 盈凸月"
-    value < 0.53 -> "🌕 滿月"
-    value < 0.72 -> "🌖 虧凸月"
-    value < 0.78 -> "🌗 下弦月"
-    else -> "🌘 殘月"
+    value < 0.03 || value >= 0.97 -> "新月"
+    value < 0.22 -> "眉月"
+    value < 0.28 -> "上弦月"
+    value < 0.47 -> "盈凸月"
+    value < 0.53 -> "滿月"
+    value < 0.72 -> "虧凸月"
+    value < 0.78 -> "下弦月"
+    else -> "殘月"
 }
 
 fun aqiLabel(value: Int?): String = when {

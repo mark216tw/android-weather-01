@@ -41,7 +41,7 @@ fun WeatherIcon(
 ) {
     val description = weatherCondition(weatherCode).description
     val cloud = if (isDay) Color(0xFF6F9DB1) else Color(0xFFBED7E5)
-    val celestial = if (isDay) Color(0xFFFFBD16) else Color(0xFFFFDA72)
+    val celestial = if (isDay) Color(0xFFFFBD16) else Color(0xFFFFE59A)
     val rain = if (isDay) Color(0xFF2C91C2) else Color(0xFF72C9F0)
     val snow = if (isDay) Color(0xFF5CA7C5) else Color(0xFFD8F2FF)
     val fog = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.58f)
@@ -82,11 +82,37 @@ private fun DrawScope.drawSketchSun(color: Color, scale: Float = 1f, center: Off
 }
 
 private fun DrawScope.drawSketchMoon(color: Color, scale: Float = 1f, center: Offset = this.center) {
-    val radius = size.minDimension * 0.31f * scale
-    val stroke = size.minDimension * 0.075f * scale
-    drawSketchArc(color, 62f, 258f, center.arcRect(radius), stroke)
-    drawSketchArc(color.copy(alpha = 0.82f), 72f, 238f, Offset(center.x + stroke * 0.18f, center.y).arcRect(radius * 0.78f), stroke * 0.42f)
-    drawSketchArc(color.copy(alpha = 0.65f), 48f, 276f, Offset(center.x - stroke * 0.12f, center.y).arcRect(radius * 1.08f), stroke * 0.28f)
+    val radius = size.minDimension * 0.34f * scale
+    val crescent = Path().apply {
+        moveTo(center.x - radius * 0.48f, center.y - radius * 0.92f)
+        cubicTo(
+            center.x + radius * 0.56f, center.y - radius * 0.78f,
+            center.x + radius * 1.06f, center.y - radius * 0.22f,
+            center.x + radius * 0.94f, center.y + radius * 0.50f,
+        )
+        cubicTo(
+            center.x + radius * 0.84f, center.y + radius * 0.98f,
+            center.x + radius * 0.20f, center.y + radius * 1.14f,
+            center.x - radius * 0.92f, center.y + radius * 0.66f,
+        )
+        cubicTo(
+            center.x - radius * 0.18f, center.y + radius * 0.60f,
+            center.x + radius * 0.14f, center.y + radius * 0.18f,
+            center.x + radius * 0.08f, center.y - radius * 0.26f,
+        )
+        cubicTo(
+            center.x + radius * 0.04f, center.y - radius * 0.58f,
+            center.x - radius * 0.16f, center.y - radius * 0.82f,
+            center.x - radius * 0.48f, center.y - radius * 0.92f,
+        )
+        close()
+    }
+    drawPath(
+        path = crescent,
+        color = color.copy(alpha = 0.14f),
+        style = Stroke(size.minDimension * 0.12f * scale, cap = StrokeCap.Round, join = StrokeJoin.Round),
+    )
+    drawPath(crescent, color)
 }
 
 private fun DrawScope.drawPartlyCloudy(isDay: Boolean, celestial: Color, cloud: Color) {
