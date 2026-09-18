@@ -51,6 +51,8 @@
 - 今日預估日照時數
 - 今日月相
 - US AQI 與 PM2.5
+- 海平面氣壓
+- 目前紫外線指數（UV Index）
 - AQI 與 PM2.5 分級描述及標準顏色
 - 海拔高度
 
@@ -136,7 +138,7 @@
    - 單一半透明緊湊資訊區塊，採雙欄資訊列
    - 降雨機率、降雨、風速與風向、海拔高度
    - 日出、日落、日照時數、月相
-   - US AQI、PM2.5
+   - US AQI、PM2.5、氣壓、紫外線指數
    - 不重複顯示頁首已有的觀測地點及資料時區
 4. 三日預報區域
    - 明天
@@ -214,8 +216,8 @@ latitude={latitude}
 longitude={longitude}
 timezone=auto
 forecast_days=4
-current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_direction_10m,is_day
-daily=weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_probability_max,precipitation_sum,sunrise,sunset,sunshine_duration,moon_phase,wind_speed_10m_max
+current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_direction_10m,pressure_msl,uv_index,is_day
+daily=weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_probability_max,precipitation_sum,sunrise,sunset,sunshine_duration,moon_phase,wind_speed_10m_max,uv_index_max
 ```
 
 規則：
@@ -283,6 +285,9 @@ current=us_aqi,pm2_5
 - 顯示 US AQI 分級及 PM2.5 濃度。
 - AQI 分級顏色：0–50 綠色、51–100 黃色、101–150 橘色、151–200 紅色、201–300 紫色、301–500 褐紅色。
 - PM2.5 分級顏色：0.0–15.4 綠色、15.5–35.4 黃色、35.5–54.4 橘色、54.5–150.4 紅色。
+- 氣壓使用 `pressure_msl`，單位為 `hPa`。
+- 目前 UV 使用 `uv_index`，每日預報使用 `uv_index_max`。
+- UV 分級為低量級（0–2）、中量級（3–5）、高量級（6–7）、過量級（8–10）、危險級（11+）。
 - 需標示空氣品質資料來源為 CAMS / Open-Meteo。
 
 ### 6.4 GPS 地名來源
@@ -514,6 +519,7 @@ android:screenOrientation="portrait"
 - 使用者拒絕定位後，仍可搜尋並查看城市天氣。
 - 主畫面清楚顯示現在、明天、後天與大後天資訊。
 - 體感溫度、降雨、風速、日出及日落可正常顯示。
+- 氣壓、目前 UV 及每日最大 UV 可正常顯示；資料缺少時顯示 `--`。
 - 可收藏、切換及移除多個城市。
 - 同一城市不可重複收藏，收藏達 20 個時會顯示上限提示，移除目前查看的收藏不會立即清除畫面。
 - App 啟動及下拉操作可更新資料。

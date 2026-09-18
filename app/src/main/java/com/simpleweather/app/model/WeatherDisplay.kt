@@ -67,6 +67,15 @@ fun pm25Description(value: Double?): String? = when {
     else -> "危害（>150.4 μg/m³）"
 }
 
+fun uvDescription(value: Double?): String? = when {
+    value == null -> null
+    value < 3.0 -> "低量級"
+    value < 6.0 -> "中量級"
+    value < 8.0 -> "高量級"
+    value < 11.0 -> "過量級"
+    else -> "危險級"
+}
+
 fun windForceLabel(speedKmh: Double?): String? {
     val metersPerSecond = speedKmh?.div(3.6) ?: return null
     return when {

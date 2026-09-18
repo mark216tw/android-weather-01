@@ -87,6 +87,7 @@ import com.simpleweather.app.model.localDateTime
 import com.simpleweather.app.model.moonPhaseLabel
 import com.simpleweather.app.model.pm25Description
 import com.simpleweather.app.model.timezoneLabel
+import com.simpleweather.app.model.uvDescription
 import com.simpleweather.app.model.windForceLabel
 import com.simpleweather.app.model.weatherCondition
 import java.time.Instant
@@ -334,7 +335,9 @@ private fun CurrentDetails(weather: WeatherBundle, now: Instant) {
         WeatherMetric("降雨機率", weather.current.precipitationProbability?.let { "$it%" } ?: "--", Icons.Default.WaterDrop, Color(0xFF25BFD3)),
         WeatherMetric("降雨量", formatRain(weather.current.precipitation), Icons.Default.Grain, Color(0xFF5596EE)),
         WeatherMetric("風速", "${formatNumber(weather.current.windSpeed)} km/h", Icons.Default.Air, Color(0xFF54C2B1), secondary = listOfNotNull(windForceLabel(weather.current.windSpeed), windDirection(weather.current.windDirection).takeIf { it.isNotBlank() }).joinToString(" · ").takeIf { it.isNotBlank() }, secondaryColor = Color(0xFF54C2B1)),
+        WeatherMetric("氣壓", weather.current.pressureMsl?.let { "${formatNumber(it)} hPa" } ?: "--", Icons.Default.Public, Color(0xFF6A9DE8)),
         WeatherMetric("海拔高度", weather.elevationMeters?.let { "${it.roundToInt()} m" } ?: "--", Icons.Default.Landscape, Color(0xFF4EC98A)),
+        WeatherMetric("紫外線", formatNumber(weather.current.uvIndex), Icons.Default.WbSunny, uvColor(weather.current.uvIndex), secondary = uvDescription(weather.current.uvIndex), secondaryColor = uvColor(weather.current.uvIndex)),
         WeatherMetric("日出", formatClock(today?.sunrise), Icons.Default.WbSunny, Color(0xFFFFA726)),
         WeatherMetric("日落", formatClock(today?.sunset), Icons.Default.NightsStay, Color(0xFFB268E8)),
         WeatherMetric("日照時數", formatSunshineDuration(today?.sunshineDurationSeconds), Icons.Default.AccessTime, Color(0xFFF4D03F)),
@@ -418,7 +421,7 @@ private fun DailyCard(forecast: DailyForecast, title: String) {
             }
             Text("體感 ${formatTemperature(forecast.maxApparentTemperature)} / ${formatTemperature(forecast.minApparentTemperature)}", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.72f), fontSize = 13.sp)
             Text("降雨 ${forecast.precipitationProbability?.let { "$it%" } ?: "--"} · ${formatRain(forecast.precipitationSum)} · 最大風速 ${formatNumber(forecast.maxWindSpeed)} km/h", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.72f), fontSize = 13.sp)
-            Text("日出 ${formatClock(forecast.sunrise)} · 日落 ${formatClock(forecast.sunset)} · ${moonPhaseLabel(forecast.moonPhase)}", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.72f), fontSize = 13.sp)
+            Text("日出 ${formatClock(forecast.sunrise)} · 日落 ${formatClock(forecast.sunset)} · UV ${formatNumber(forecast.uvIndexMax)} · ${moonPhaseLabel(forecast.moonPhase)}", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.72f), fontSize = 13.sp)
         }
     }
 }
@@ -527,6 +530,15 @@ private fun pm25Color(value: Double?): Color = when {
     value <= 54.4 -> Color(0xFFFB8C00)
     value <= 150.4 -> Color(0xFFE53935)
     else -> Color(0xFF6D4C41)
+}
+
+private fun uvColor(value: Double?): Color = when {
+    value == null -> Color(0xFFAAB5C7)
+    value < 3.0 -> Color(0xFF43A047)
+    value < 6.0 -> Color(0xFFFBC02D)
+    value < 8.0 -> Color(0xFFFB8C00)
+    value < 11.0 -> Color(0xFFE53935)
+    else -> Color(0xFF8E24AA)
 }
 
 @Composable

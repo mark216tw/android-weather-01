@@ -33,6 +33,8 @@ data class CurrentWeather(
     val weatherCode: Int? = null,
     val windSpeed: Double? = null,
     val windDirection: Double? = null,
+    val pressureMsl: Double? = null,
+    val uvIndex: Double? = null,
     val isDay: Boolean = true,
 )
 
@@ -51,6 +53,7 @@ data class DailyForecast(
     val sunshineDurationSeconds: Double? = null,
     val moonPhase: Double? = null,
     val maxWindSpeed: Double? = null,
+    val uvIndexMax: Double? = null,
 )
 
 @Serializable

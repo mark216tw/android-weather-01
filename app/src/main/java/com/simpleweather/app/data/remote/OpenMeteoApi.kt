@@ -20,8 +20,8 @@ interface ForecastApi {
     ): ForecastResponse
 
     companion object {
-        const val CURRENT_FIELDS = "temperature_2m,apparent_temperature,relative_humidity_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_direction_10m,is_day"
-        const val DAILY_FIELDS = "weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_probability_max,precipitation_sum,sunrise,sunset,sunshine_duration,moon_phase,wind_speed_10m_max"
+        const val CURRENT_FIELDS = "temperature_2m,apparent_temperature,relative_humidity_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_direction_10m,pressure_msl,uv_index,is_day"
+        const val DAILY_FIELDS = "weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_probability_max,precipitation_sum,sunrise,sunset,sunshine_duration,moon_phase,wind_speed_10m_max,uv_index_max"
     }
 }
 
@@ -65,6 +65,8 @@ data class CurrentDto(
     @SerialName("weather_code") val weatherCode: Int? = null,
     @SerialName("wind_speed_10m") val windSpeed: Double? = null,
     @SerialName("wind_direction_10m") val windDirection: Double? = null,
+    @SerialName("pressure_msl") val pressureMsl: Double? = null,
+    @SerialName("uv_index") val uvIndex: Double? = null,
     @SerialName("is_day") val isDay: Int? = null,
 )
 
@@ -83,6 +85,7 @@ data class DailyDto(
     @SerialName("sunshine_duration") val sunshineDuration: List<Double?> = emptyList(),
     @SerialName("moon_phase") val moonPhase: List<Double?> = emptyList(),
     @SerialName("wind_speed_10m_max") val maxWindSpeed: List<Double?> = emptyList(),
+    @SerialName("uv_index_max") val uvIndexMax: List<Double?> = emptyList(),
 )
 
 @Serializable

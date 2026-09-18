@@ -65,6 +65,14 @@ class WeatherDisplayTest {
         assertEquals("危害（>150.4 μg/m³）", pm25Description(150.5))
     }
 
+    @Test fun `maps UV index descriptions at boundaries`() {
+        assertEquals("低量級", uvDescription(2.9))
+        assertEquals("中量級", uvDescription(3.0))
+        assertEquals("高量級", uvDescription(6.0))
+        assertEquals("過量級", uvDescription(8.0))
+        assertEquals("危險級", uvDescription(11.0))
+    }
+
     @Test fun `formats sunshine seconds as hours and minutes`() {
         assertEquals("2 小時 30 分", formatSunshineDuration(9_000.0))
     }

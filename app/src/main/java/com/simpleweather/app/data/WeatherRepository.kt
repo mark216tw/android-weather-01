@@ -111,6 +111,7 @@ class WeatherRepository(
                 sunshineDurationSeconds = dailyDto.sunshineDuration.getOrNull(index),
                 moonPhase = dailyDto.moonPhase.getOrNull(index),
                 maxWindSpeed = dailyDto.maxWindSpeed.getOrNull(index),
+                uvIndexMax = dailyDto.uvIndexMax.getOrNull(index),
             )
         }
         require(forecasts.isNotEmpty()) { "回應缺少可用預報" }
@@ -129,6 +130,8 @@ class WeatherRepository(
                 weatherCode = currentDto.weatherCode,
                 windSpeed = currentDto.windSpeed,
                 windDirection = currentDto.windDirection,
+                pressureMsl = currentDto.pressureMsl,
+                uvIndex = currentDto.uvIndex,
                 isDay = currentDto.isDay != 0,
             ),
             daily = forecasts.take(4),
