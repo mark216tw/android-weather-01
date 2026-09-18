@@ -26,7 +26,10 @@ android {
         create("prerelease") {
             initWith(getByName("debug"))
             applicationIdSuffix = ".prerelease"
-            versionNameSuffix = "-prerelease.5"
+            versionNameSuffix = "-prerelease"
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
             isDebuggable = false
             signingConfig = signingConfigs.getByName("debug")
             matchingFallbacks += listOf("debug")

@@ -1,12 +1,5 @@
 package com.simpleweather.app.ui
 
-import android.provider.Settings
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,10 +12,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -73,12 +64,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -165,43 +153,18 @@ fun WeatherScreen(
 @Composable
 private fun WeatherBackground(scene: WeatherScene, isDay: Boolean) {
     val colors = when {
-        !isDay -> listOf(Color(0xFF0A1426), Color(0xFF0E1B32), Color(0xFF12213A))
+        !isDay && scene == WeatherScene.CLEAR -> listOf(Color(0xFF101B38), Color(0xFF172752), Color(0xFF26365C))
+        !isDay && (scene == WeatherScene.CLOUDY || scene == WeatherScene.FOG) -> listOf(Color(0xFF162339), Color(0xFF22334C), Color(0xFF34445E))
+        !isDay && scene == WeatherScene.THUNDERSTORM -> listOf(Color(0xFF17152F), Color(0xFF27234A), Color(0xFF3B3158))
+        !isDay && scene == WeatherScene.SNOW -> listOf(Color(0xFF1C2D48), Color(0xFF304A68), Color(0xFF526D86))
+        !isDay -> listOf(Color(0xFF12233D), Color(0xFF203A59), Color(0xFF355671))
         scene == WeatherScene.CLEAR -> listOf(Color(0xFFE8F5FA), Color(0xFFF3F9FC), Color(0xFFFFFAEC))
         scene == WeatherScene.CLOUDY || scene == WeatherScene.FOG -> listOf(Color(0xFFE4EEF3), Color(0xFFF0F6F8), Color(0xFFF8FBFC))
         scene == WeatherScene.THUNDERSTORM -> listOf(Color(0xFFDDE5ED), Color(0xFFEBF0F5), Color(0xFFF6F8FA))
         scene == WeatherScene.SNOW -> listOf(Color(0xFFE8F3F7), Color(0xFFF5FAFC), Color.White)
         else -> listOf(Color(0xFFDCECF4), Color(0xFFEEF6F9), Color(0xFFF8FBFC))
     }
-    val context = LocalContext.current
-    val animationsEnabled = remember {
-        runCatching { Settings.Global.getFloat(context.contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f) != 0f }.getOrDefault(true)
-    }
-    val transition = rememberInfiniteTransition(label = "sky")
-    val movement by transition.animateFloat(
-        initialValue = 0f,
-        targetValue = if (animationsEnabled) 1f else 0f,
-        animationSpec = infiniteRepeatable(tween(24_000), RepeatMode.Reverse),
-        label = "movement",
-    )
-    Box(Modifier.fillMaxSize().background(Brush.verticalGradient(colors))) {
-        Canvas(Modifier.fillMaxSize()) {
-            val shift = size.width * 0.1f * movement
-            val cloudColor = if (isDay) Color(0xFF77A9C0).copy(alpha = 0.09f) else Color.White.copy(alpha = 0.035f)
-            repeat(3) { index ->
-                val baseX = index * size.width * 0.43f - size.width * 0.08f + shift * (0.5f + index * 0.12f)
-                val baseY = size.height * (0.13f + index * 0.16f)
-                drawCircle(cloudColor, size.width * 0.11f, Offset(baseX, baseY))
-                drawCircle(cloudColor, size.width * 0.08f, Offset(baseX + size.width * 0.1f, baseY + 8f))
-            }
-            if (scene == WeatherScene.RAIN || scene == WeatherScene.THUNDERSTORM) {
-                repeat(16) { index ->
-                    val x = (index * size.width / 15f + shift * 1.8f) % size.width
-                    val y = (index * 97f + movement * size.height) % size.height
-                    drawLine(Color.White.copy(alpha = 0.25f), Offset(x, y), Offset(x - 8f, y + 30f), 3f, StrokeCap.Round)
-                }
-            }
-        }
-    }
+    Box(Modifier.fillMaxSize().background(Brush.verticalGradient(colors)))
 }
 
 @Composable
@@ -373,21 +336,25 @@ private fun CurrentDetails(weather: WeatherBundle, now: Instant) {
         WeatherMetric("日落", formatClock(today?.sunset), Icons.Default.NightsStay, Color(0xFFB268E8)),
         WeatherMetric("日照時數", formatSunshineDuration(today?.sunshineDurationSeconds), Icons.Default.AccessTime, Color(0xFFF4D03F)),
         WeatherMetric("月相", moonPhaseLabel(today?.moonPhase), Icons.Default.NightsStay, Color(0xFF83BDF4)),
-        WeatherMetric("US AQI", aqiLabel(aqi), Icons.Default.Speed, aqiColor(aqi), aqiCategory(aqi)),
+        WeatherMetric("US AQI", aqiLabel(aqi), Icons.Default.Speed, aqiColor(aqi)),
         WeatherMetric("PM2.5", weather.airQuality?.pm25?.let { "${formatNumber(it)} μg/m³" } ?: "--", Icons.Default.BlurOn, Color(0xFFAAB5C7)),
-        WeatherMetric("觀測地點", weather.place.name, Icons.Default.LocationOn, Color(0xFF4FC3F7)),
-        WeatherMetric("資料時區", weather.timezone, Icons.Default.Public, Color(0xFF8A9DF0)),
     )
-    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+    Card(
+        colors = CardDefaults.cardColors(containerColor = glassColor()),
+        shape = RoundedCornerShape(22.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.07f)),
+    ) {
+        Column(Modifier.padding(horizontal = 14.dp, vertical = 8.dp)) {
         metrics.chunked(2).forEach { rowMetrics ->
             Row(
-                modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
+                modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 rowMetrics.forEach { metric ->
-                    WeatherMetricCard(metric, Modifier.weight(1f).fillMaxHeight())
+                    WeatherMetricValue(metric, Modifier.weight(1f))
                 }
             }
+        }
         }
     }
 }
@@ -397,51 +364,22 @@ private data class WeatherMetric(
     val value: String,
     val icon: ImageVector,
     val accent: Color,
-    val badge: String? = null,
 )
 
 @Composable
-private fun WeatherMetricCard(metric: WeatherMetric, modifier: Modifier = Modifier) {
-    Card(
-        modifier = modifier.heightIn(min = 88.dp),
-        colors = CardDefaults.cardColors(containerColor = glassColor()),
-        shape = RoundedCornerShape(18.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f)),
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize().padding(horizontal = 14.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(metric.icon, contentDescription = null, tint = metric.accent, modifier = Modifier.size(16.dp))
-                Text(
-                    metric.label,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.58f),
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier.padding(start = 5.dp).weight(1f),
-                )
-                metric.badge?.let {
-                    Text(
-                        it,
-                        color = metric.accent,
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .background(metric.accent.copy(alpha = 0.14f), RoundedCornerShape(50))
-                            .padding(horizontal = 7.dp, vertical = 3.dp),
-                    )
-                }
-            }
+private fun WeatherMetricValue(metric: WeatherMetric, modifier: Modifier = Modifier) {
+    Column(modifier = modifier.padding(vertical = 5.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(metric.icon, contentDescription = null, tint = metric.accent, modifier = Modifier.size(15.dp))
             Text(
-                metric.value,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontSize = if (metric.label == "資料時區" || metric.label == "觀測地點") 15.sp else 20.sp,
-                fontWeight = FontWeight.Bold,
-                lineHeight = 22.sp,
-                modifier = Modifier.padding(top = 9.dp),
+                metric.label,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.62f),
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.padding(start = 5.dp),
             )
         }
+        Text(metric.value, color = MaterialTheme.colorScheme.onSurface, fontSize = 16.sp, fontWeight = FontWeight.Bold, maxLines = 1, modifier = Modifier.padding(top = 2.dp))
     }
 }
 
@@ -558,16 +496,6 @@ private fun windDirection(degrees: Double?): String {
     return directions[((degrees / 45.0).roundToInt() % 8 + 8) % 8] + "風"
 }
 
-private fun aqiCategory(value: Int?): String? = when {
-    value == null -> null
-    value <= 50 -> "良好"
-    value <= 100 -> "普通"
-    value <= 150 -> "敏感族群"
-    value <= 200 -> "不健康"
-    value <= 300 -> "非常不健康"
-    else -> "危害"
-}
-
 private fun aqiColor(value: Int?): Color = when {
     value == null -> Color(0xFFAAB5C7)
     value <= 50 -> Color(0xFF55C98B)
@@ -579,4 +507,4 @@ private fun aqiColor(value: Int?): Color = when {
 }
 
 @Composable
-private fun glassColor(): Color = MaterialTheme.colorScheme.surface.copy(alpha = 0.96f)
+private fun glassColor(): Color = MaterialTheme.colorScheme.surface.copy(alpha = 0.74f)

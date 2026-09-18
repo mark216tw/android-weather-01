@@ -16,9 +16,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import com.simpleweather.app.model.isDaylightAt
 import java.time.Instant
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 private val LightColors = lightColorScheme(
     primary = Color(0xFF087FA3),
@@ -46,10 +51,21 @@ fun WeatherApp(
     openSettings: () -> Unit,
 ) {
     var now by remember { mutableStateOf(Instant.now()) }
-    LaunchedEffect(Unit) {
-        while (true) {
-            now = Instant.now()
-            delay(1_000L - System.currentTimeMillis() % 1_000L)
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LaunchedEffect(lifecycleOwner) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            launch {
+                while (isActive) {
+                    now = Instant.now()
+                    delay(1_000L - System.currentTimeMillis() % 1_000L)
+                }
+            }
+            launch {
+                while (isActive) {
+                    viewModel.refreshIfStale()
+                    delay(15 * 60 * 1_000L)
+                }
+            }
         }
     }
     val isDaylight = state.weather?.isDaylightAt(now) ?: true

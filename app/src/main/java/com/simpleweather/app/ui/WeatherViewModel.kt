@@ -42,6 +42,10 @@ class WeatherViewModel(
     private val repository: WeatherRepository,
     private val locationProvider: LocationProvider,
 ) : ViewModel() {
+    private companion object {
+        const val AUTOMATIC_REFRESH_AGE_MILLIS = 15 * 60 * 1_000L
+    }
+
     private val _state = MutableStateFlow(WeatherUiState())
     val state: StateFlow<WeatherUiState> = _state.asStateFlow()
     private var searchJob: Job? = null
@@ -108,6 +112,20 @@ class WeatherViewModel(
     fun refresh() {
         val place = _state.value.weather?.place
         if (place == null || place.isCurrentLocation) locate() else load(place, refreshing = true)
+    }
+
+    fun refreshIfStale() {
+        val current = _state.value
+        val weather = current.weather ?: return
+        if (current.isLoading || current.isRefreshing || current.isLocating) return
+        val age = (System.currentTimeMillis() - weather.fetchedAtEpochMillis).coerceAtLeast(0L)
+        if (age >= AUTOMATIC_REFRESH_AGE_MILLIS) {
+            load(
+                place = weather.place,
+                refreshing = true,
+                staleLocation = current.locationIsStale,
+            )
+        }
     }
 
     fun selectPlace(place: Place) {
