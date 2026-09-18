@@ -53,8 +53,28 @@ class WeatherDisplayTest {
         assertEquals("151 · 不健康", aqiLabel(151))
     }
 
+    @Test fun `maps AQI and PM25 health descriptions at boundaries`() {
+        assertEquals("良好（0–50）", aqiDescription(50))
+        assertEquals("普通（51–100）", aqiDescription(51))
+        assertEquals("對敏感族群不健康（101–150）", aqiDescription(150))
+        assertEquals("對所有族群不健康（151–200）", aqiDescription(151))
+        assertEquals("良好（0.0–15.4 μg/m³）", pm25Description(15.4))
+        assertEquals("普通（15.5–35.4 μg/m³）", pm25Description(15.5))
+        assertEquals("對敏感族群不健康（35.5–54.4 μg/m³）", pm25Description(35.5))
+        assertEquals("對所有族群不健康（54.5–150.4 μg/m³）", pm25Description(54.5))
+        assertEquals("危害（>150.4 μg/m³）", pm25Description(150.5))
+    }
+
     @Test fun `formats sunshine seconds as hours and minutes`() {
         assertEquals("2 小時 30 分", formatSunshineDuration(9_000.0))
+    }
+
+    @Test fun `formats wind force from kilometers per hour`() {
+        assertEquals("0級 · 無風", windForceLabel(0.72))
+        assertEquals("1級 · 軟風", windForceLabel(1.08))
+        assertEquals("5級 · 清風", windForceLabel(36.0))
+        assertEquals("13級 · 強烈颶風", windForceLabel(183.24))
+        assertEquals("16級 · 超強颶風", windForceLabel(183.6))
     }
 
     @Test fun `selects and labels the next three local forecast days`() {

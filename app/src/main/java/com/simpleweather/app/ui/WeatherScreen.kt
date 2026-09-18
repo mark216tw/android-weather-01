@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -77,14 +78,16 @@ import com.simpleweather.app.model.DailyForecast
 import com.simpleweather.app.model.Place
 import com.simpleweather.app.model.WeatherBundle
 import com.simpleweather.app.model.WeatherScene
-import com.simpleweather.app.model.aqiLabel
+import com.simpleweather.app.model.aqiDescription
 import com.simpleweather.app.model.formatLocalTime
 import com.simpleweather.app.model.formatSunshineDuration
 import com.simpleweather.app.model.forecastDayLabel
 import com.simpleweather.app.model.futureForecasts
 import com.simpleweather.app.model.localDateTime
 import com.simpleweather.app.model.moonPhaseLabel
+import com.simpleweather.app.model.pm25Description
 import com.simpleweather.app.model.timezoneLabel
+import com.simpleweather.app.model.windForceLabel
 import com.simpleweather.app.model.weatherCondition
 import java.time.Instant
 import java.time.ZoneId
@@ -153,16 +156,16 @@ fun WeatherScreen(
 @Composable
 private fun WeatherBackground(scene: WeatherScene, isDay: Boolean) {
     val colors = when {
-        !isDay && scene == WeatherScene.CLEAR -> listOf(Color(0xFF101B38), Color(0xFF172752), Color(0xFF26365C))
-        !isDay && (scene == WeatherScene.CLOUDY || scene == WeatherScene.FOG) -> listOf(Color(0xFF162339), Color(0xFF22334C), Color(0xFF34445E))
-        !isDay && scene == WeatherScene.THUNDERSTORM -> listOf(Color(0xFF17152F), Color(0xFF27234A), Color(0xFF3B3158))
-        !isDay && scene == WeatherScene.SNOW -> listOf(Color(0xFF1C2D48), Color(0xFF304A68), Color(0xFF526D86))
-        !isDay -> listOf(Color(0xFF12233D), Color(0xFF203A59), Color(0xFF355671))
-        scene == WeatherScene.CLEAR -> listOf(Color(0xFFE8F5FA), Color(0xFFF3F9FC), Color(0xFFFFFAEC))
-        scene == WeatherScene.CLOUDY || scene == WeatherScene.FOG -> listOf(Color(0xFFE4EEF3), Color(0xFFF0F6F8), Color(0xFFF8FBFC))
-        scene == WeatherScene.THUNDERSTORM -> listOf(Color(0xFFDDE5ED), Color(0xFFEBF0F5), Color(0xFFF6F8FA))
-        scene == WeatherScene.SNOW -> listOf(Color(0xFFE8F3F7), Color(0xFFF5FAFC), Color.White)
-        else -> listOf(Color(0xFFDCECF4), Color(0xFFEEF6F9), Color(0xFFF8FBFC))
+        !isDay && scene == WeatherScene.CLEAR -> listOf(Color(0xFF172A58), Color(0xFF21427A), Color(0xFF385D91))
+        !isDay && (scene == WeatherScene.CLOUDY || scene == WeatherScene.FOG) -> listOf(Color(0xFF203551), Color(0xFF315170), Color(0xFF4B6D8C))
+        !isDay && scene == WeatherScene.THUNDERSTORM -> listOf(Color(0xFF241D4C), Color(0xFF3B2D6C), Color(0xFF5B4380))
+        !isDay && scene == WeatherScene.SNOW -> listOf(Color(0xFF2A4770), Color(0xFF47749A), Color(0xFF7298B7))
+        !isDay -> listOf(Color(0xFF1E3B65), Color(0xFF32618A), Color(0xFF4E83A4))
+        scene == WeatherScene.CLEAR -> listOf(Color(0xFF8ADCF2), Color(0xFFBCECF5), Color(0xFFFFD88A))
+        scene == WeatherScene.CLOUDY || scene == WeatherScene.FOG -> listOf(Color(0xFF9BC8D8), Color(0xFFC8E1E6), Color(0xFFE8F1E9))
+        scene == WeatherScene.THUNDERSTORM -> listOf(Color(0xFF839FBD), Color(0xFFB4C5D5), Color(0xFFD4DCE4))
+        scene == WeatherScene.SNOW -> listOf(Color(0xFF9DDBEA), Color(0xFFD0F0F5), Color(0xFFFFFFFF))
+        else -> listOf(Color(0xFF71C6E5), Color(0xFFA6DCEB), Color(0xFFD3F0F2))
     }
     Box(Modifier.fillMaxSize().background(Brush.verticalGradient(colors)))
 }
@@ -260,15 +263,24 @@ private fun WeatherContent(
                     onClick = viewModel::openPlaceSheet,
                     modifier = Modifier
                         .size(48.dp)
-                        .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.88f), CircleShape)
+                        .offset(y = (-9).dp)
                         .semantics { contentDescription = "搜尋或切換城市" },
-                ) { Icon(Icons.Default.Search, null, tint = MaterialTheme.colorScheme.primary) }
+                ) {
+                    Box(
+                        Modifier
+                            .size(42.dp)
+                            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.88f), CircleShape),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(Icons.Default.Search, null, tint = MaterialTheme.colorScheme.primary)
+                    }
+                }
             }
         }
         item {
-            BoxWithConstraints(Modifier.fillMaxWidth()) {
-                val compact = maxWidth < 360.dp
-                Column(Modifier.fillMaxWidth().padding(vertical = 4.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                BoxWithConstraints(Modifier.fillMaxWidth()) {
+                    val compact = maxWidth < 360.dp
+                    Column(Modifier.fillMaxWidth().padding(vertical = 4.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
@@ -277,37 +289,27 @@ private fun WeatherContent(
                         WeatherIcon(
                             weatherCode = weather.current.weatherCode,
                             isDay = isDaylight,
-                            modifier = Modifier.size(if (compact) 72.dp else 88.dp),
+                            modifier = Modifier.size(if (compact) 84.dp else 104.dp),
                         )
                         Text(
                             formatTemperature(weather.current.temperature),
                             color = contentColor,
-                            fontSize = if (compact) 64.sp else 72.sp,
+                            fontSize = if (compact) 72.sp else 82.sp,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(horizontal = if (compact) 4.dp else 6.dp),
                         )
-                        Column(horizontalAlignment = Alignment.Start) {
-                            Text("濕度", color = contentColor.copy(alpha = 0.65f), fontSize = 14.sp)
-                            Text(
-                                weather.current.relativeHumidity?.let { "$it%" } ?: "--",
-                                color = contentColor,
-                                fontSize = if (compact) 30.sp else 34.sp,
-                                fontWeight = FontWeight.Bold,
-                            )
+                        Column(horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.spacedBy(1.dp)) {
+                            Text("濕度", color = contentColor.copy(alpha = 0.65f), fontSize = 13.sp)
+                            Text(weather.current.relativeHumidity?.let { "$it%" } ?: "--", color = contentColor, fontSize = if (compact) 27.sp else 30.sp, fontWeight = FontWeight.Bold)
+                            Text("體感", color = contentColor.copy(alpha = 0.65f), fontSize = 12.sp, modifier = Modifier.padding(top = 2.dp))
+                            Text(formatTemperature(weather.current.apparentTemperature), color = contentColor, fontSize = if (compact) 20.sp else 23.sp, fontWeight = FontWeight.Bold)
                         }
                     }
-                    Text(currentCondition.description, color = contentColor, fontSize = 28.sp, fontWeight = FontWeight.Bold)
-                    Text(
-                        "體感 ${formatTemperature(weather.current.apparentTemperature)}",
-                        color = contentColor.copy(alpha = 0.68f),
-                        fontSize = 15.sp,
-                        modifier = Modifier.padding(top = 1.dp),
-                    )
+                    Text(currentCondition.description, color = contentColor, fontSize = if (compact) 31.sp else 35.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }
         item { CurrentDetails(weather, now) }
-        item { Text("三日預報", color = contentColor, fontSize = 20.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 4.dp)) }
         items(futureForecasts) { forecast ->
             DailyCard(forecast, forecastDayLabel(forecast.date, localToday))
         }
@@ -327,17 +329,18 @@ private fun CurrentDetails(weather: WeatherBundle, now: Instant) {
     val localDate = weather.localDateTime(now).toLocalDate().toString()
     val today = weather.daily.firstOrNull { it.date == localDate } ?: weather.daily.firstOrNull()
     val aqi = weather.airQuality?.usAqi
+    val pm25 = weather.airQuality?.pm25
     val metrics = listOf(
         WeatherMetric("降雨機率", weather.current.precipitationProbability?.let { "$it%" } ?: "--", Icons.Default.WaterDrop, Color(0xFF25BFD3)),
-        WeatherMetric("降雨", formatRain(weather.current.precipitation), Icons.Default.Grain, Color(0xFF5596EE)),
-        WeatherMetric("風速", "${formatNumber(weather.current.windSpeed)} km/h ${windDirection(weather.current.windDirection)}", Icons.Default.Air, Color(0xFF54C2B1)),
+        WeatherMetric("降雨量", formatRain(weather.current.precipitation), Icons.Default.Grain, Color(0xFF5596EE)),
+        WeatherMetric("風速", "${formatNumber(weather.current.windSpeed)} km/h", Icons.Default.Air, Color(0xFF54C2B1), secondary = listOfNotNull(windForceLabel(weather.current.windSpeed), windDirection(weather.current.windDirection).takeIf { it.isNotBlank() }).joinToString(" · ").takeIf { it.isNotBlank() }, secondaryColor = Color(0xFF54C2B1)),
         WeatherMetric("海拔高度", weather.elevationMeters?.let { "${it.roundToInt()} m" } ?: "--", Icons.Default.Landscape, Color(0xFF4EC98A)),
         WeatherMetric("日出", formatClock(today?.sunrise), Icons.Default.WbSunny, Color(0xFFFFA726)),
         WeatherMetric("日落", formatClock(today?.sunset), Icons.Default.NightsStay, Color(0xFFB268E8)),
         WeatherMetric("日照時數", formatSunshineDuration(today?.sunshineDurationSeconds), Icons.Default.AccessTime, Color(0xFFF4D03F)),
-        WeatherMetric("月相", moonPhaseLabel(today?.moonPhase), Icons.Default.NightsStay, Color(0xFF83BDF4)),
-        WeatherMetric("US AQI", aqiLabel(aqi), Icons.Default.Speed, aqiColor(aqi)),
-        WeatherMetric("PM2.5", weather.airQuality?.pm25?.let { "${formatNumber(it)} μg/m³" } ?: "--", Icons.Default.BlurOn, Color(0xFFAAB5C7)),
+        WeatherMetric("月相", moonPhaseLabel(today?.moonPhase), Icons.Default.NightsStay, Color(0xFF83BDF4), isMoonPhase = true),
+        WeatherMetric("US AQI", aqi?.toString() ?: "--", Icons.Default.Speed, aqiColor(aqi), secondary = aqiDescription(aqi), secondaryColor = aqiColor(aqi)),
+        WeatherMetric("PM2.5", pm25?.let { "${formatNumber(it)} μg/m³" } ?: "--", Icons.Default.BlurOn, pm25Color(pm25), secondary = pm25Description(pm25), secondaryColor = pm25Color(pm25)),
     )
     Card(
         colors = CardDefaults.cardColors(containerColor = glassColor()),
@@ -364,6 +367,9 @@ private data class WeatherMetric(
     val value: String,
     val icon: ImageVector,
     val accent: Color,
+    val secondary: String? = null,
+    val secondaryColor: Color = accent,
+    val isMoonPhase: Boolean = false,
 )
 
 @Composable
@@ -379,7 +385,15 @@ private fun WeatherMetricValue(metric: WeatherMetric, modifier: Modifier = Modif
                 modifier = Modifier.padding(start = 5.dp),
             )
         }
-        Text(metric.value, color = MaterialTheme.colorScheme.onSurface, fontSize = 16.sp, fontWeight = FontWeight.Bold, maxLines = 1, modifier = Modifier.padding(top = 2.dp))
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 2.dp)) {
+            if (metric.isMoonPhase) {
+                WeatherIcon(weatherCode = 0, isDay = false, modifier = Modifier.size(23.dp))
+            }
+            Text(metric.value, color = MaterialTheme.colorScheme.onSurface, fontSize = 18.sp, fontWeight = FontWeight.Bold, maxLines = 1, modifier = Modifier.padding(start = if (metric.isMoonPhase) 4.dp else 0.dp))
+        }
+        metric.secondary?.let {
+            Text(it, color = metric.secondaryColor, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, maxLines = 2, lineHeight = 15.sp)
+        }
     }
 }
 
@@ -498,12 +512,21 @@ private fun windDirection(degrees: Double?): String {
 
 private fun aqiColor(value: Int?): Color = when {
     value == null -> Color(0xFFAAB5C7)
-    value <= 50 -> Color(0xFF55C98B)
-    value <= 100 -> Color(0xFFE2BE36)
-    value <= 150 -> Color(0xFFF39A3D)
-    value <= 200 -> Color(0xFFEF6B69)
-    value <= 300 -> Color(0xFFA974D6)
-    else -> Color(0xFF9D6B72)
+    value <= 50 -> Color(0xFF43A047)
+    value <= 100 -> Color(0xFFFBC02D)
+    value <= 150 -> Color(0xFFFB8C00)
+    value <= 200 -> Color(0xFFE53935)
+    value <= 300 -> Color(0xFF8E24AA)
+    else -> Color(0xFF6D4C41)
+}
+
+private fun pm25Color(value: Double?): Color = when {
+    value == null -> Color(0xFFAAB5C7)
+    value <= 15.4 -> Color(0xFF43A047)
+    value <= 35.4 -> Color(0xFFFBC02D)
+    value <= 54.4 -> Color(0xFFFB8C00)
+    value <= 150.4 -> Color(0xFFE53935)
+    else -> Color(0xFF6D4C41)
 }
 
 @Composable

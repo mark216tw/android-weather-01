@@ -48,6 +48,46 @@ fun aqiLabel(value: Int?): String = when {
     else -> "$value · 危害"
 }
 
+fun aqiDescription(value: Int?): String? = when {
+    value == null -> null
+    value <= 50 -> "良好（0–50）"
+    value <= 100 -> "普通（51–100）"
+    value <= 150 -> "對敏感族群不健康（101–150）"
+    value <= 200 -> "對所有族群不健康（151–200）"
+    value <= 300 -> "非常不健康（201–300）"
+    else -> "危害（301–500）"
+}
+
+fun pm25Description(value: Double?): String? = when {
+    value == null -> null
+    value <= 15.4 -> "良好（0.0–15.4 μg/m³）"
+    value <= 35.4 -> "普通（15.5–35.4 μg/m³）"
+    value <= 54.4 -> "對敏感族群不健康（35.5–54.4 μg/m³）"
+    value <= 150.4 -> "對所有族群不健康（54.5–150.4 μg/m³）"
+    else -> "危害（>150.4 μg/m³）"
+}
+
+fun windForceLabel(speedKmh: Double?): String? {
+    val metersPerSecond = speedKmh?.div(3.6) ?: return null
+    return when {
+        metersPerSecond <= 0.2 -> "0級 · 無風"
+        metersPerSecond <= 1.5 -> "1級 · 軟風"
+        metersPerSecond <= 3.3 -> "2級 · 輕風"
+        metersPerSecond <= 5.4 -> "3級 · 微風"
+        metersPerSecond <= 7.9 -> "4級 · 和風"
+        metersPerSecond <= 10.7 -> "5級 · 清風"
+        metersPerSecond <= 13.8 -> "6級 · 強風"
+        metersPerSecond <= 17.1 -> "7級 · 疾風"
+        metersPerSecond <= 20.7 -> "8級 · 大風"
+        metersPerSecond <= 24.4 -> "9級 · 烈風"
+        metersPerSecond <= 28.4 -> "10級 · 狂風"
+        metersPerSecond <= 32.6 -> "11級 · 暴風"
+        metersPerSecond <= 36.9 -> "12級 · 颶風"
+        metersPerSecond <= 50.9 -> "13級 · 強烈颶風"
+        else -> "16級 · 超強颶風"
+    }
+}
+
 fun formatSunshineDuration(seconds: Double?): String {
     if (seconds == null) return "--"
     val totalMinutes = (seconds / 60).toInt().coerceAtLeast(0)
