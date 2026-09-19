@@ -131,6 +131,8 @@ class WeatherRepository(
                 windSpeed = currentDto.windSpeed,
                 windDirection = currentDto.windDirection,
                 pressureMsl = currentDto.pressureMsl,
+                visibilityMeters = currentDto.visibility,
+                cloudCover = currentDto.cloudCover,
                 uvIndex = currentDto.uvIndex,
                 isDay = currentDto.isDay != 0,
             ),

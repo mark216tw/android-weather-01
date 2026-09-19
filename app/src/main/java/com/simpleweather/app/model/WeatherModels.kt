@@ -34,6 +34,8 @@ data class CurrentWeather(
     val windSpeed: Double? = null,
     val windDirection: Double? = null,
     val pressureMsl: Double? = null,
+    val visibilityMeters: Double? = null,
+    val cloudCover: Int? = null,
     val uvIndex: Double? = null,
     val isDay: Boolean = true,
 )

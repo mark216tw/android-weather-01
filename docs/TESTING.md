@@ -39,6 +39,7 @@ app/build/reports/lint-results-debug.html
 - 日出包含、日落排除的日夜邊界。
 - IANA 時區、當地秒級時間與 GMT offset。
 - 月相、US AQI 與日照時數格式化。
+- 海平面氣壓、能見度、雲量、UV 及空氣品質分級邊界。
 - 依地點當地日期篩選明天、後天及大後天。
 
 ## 實機／模擬器檢查

@@ -52,6 +52,8 @@
 - 今日月相
 - US AQI 與 PM2.5
 - 海平面氣壓
+- 能見度及分級描述
+- 雲量及天空覆蓋描述
 - 目前紫外線指數（UV Index）
 - AQI 與 PM2.5 分級描述及標準顏色
 - 海拔高度
@@ -138,6 +140,7 @@
    - 單一半透明緊湊資訊區塊，採雙欄資訊列
    - 降雨機率、降雨、風速與風向、海拔高度
    - 日出、日落、日照時數、月相
+   - 能見度與雲量置於風速與氣壓下一列
    - US AQI、PM2.5、氣壓、紫外線指數
    - 不重複顯示頁首已有的觀測地點及資料時區
 4. 三日預報區域
@@ -216,7 +219,7 @@ latitude={latitude}
 longitude={longitude}
 timezone=auto
 forecast_days=4
-current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_direction_10m,pressure_msl,uv_index,is_day
+current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_direction_10m,pressure_msl,visibility,cloud_cover,uv_index,is_day
 daily=weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_probability_max,precipitation_sum,sunrise,sunset,sunshine_duration,moon_phase,wind_speed_10m_max,uv_index_max
 ```
 
@@ -286,6 +289,9 @@ current=us_aqi,pm2_5
 - AQI 分級顏色：0–50 綠色、51–100 黃色、101–150 橘色、151–200 紅色、201–300 紫色、301–500 褐紅色。
 - PM2.5 分級顏色：0.0–15.4 綠色、15.5–35.4 黃色、35.5–54.4 橘色、54.5–150.4 紅色。
 - 氣壓使用 `pressure_msl`，單位為 `hPa`。
+- 氣壓分級：低於 980 hPa 為強烈低壓、980–1010.9 為低氣壓、1011–1019.9 為接近平均、1020–1039.9 為高氣壓、1040 以上為強高氣壓。此分級僅供閱讀，不得僅憑氣壓宣稱颱風。
+- 能見度使用 `visibility`，由公尺轉換成公里；分為良好（10 km 以上）、普通（5–低於 10 km）、不佳（1–低於 5 km）及很差（低於 1 km）。
+- 雲量使用 `cloud_cover`；分為晴朗（0–20%）、大致晴朗（21–40%）、局部多雲（41–60%）、多雲（61–80%）及陰天（81–100%）。
 - 目前 UV 使用 `uv_index`，每日預報使用 `uv_index_max`。
 - UV 分級為低量級（0–2）、中量級（3–5）、高量級（6–7）、過量級（8–10）、危險級（11+）。
 - 需標示空氣品質資料來源為 CAMS / Open-Meteo。
@@ -372,10 +378,16 @@ CurrentWeather
 - observedAt
 - temperature
 - apparentTemperature
+- relativeHumidity
+- precipitationProbability
 - precipitation
 - weatherCode
 - windSpeed
 - windDirection
+- pressureMsl
+- visibilityMeters
+- cloudCover
+- uvIndex
 - isDay
 
 DailyForecast
@@ -484,6 +496,7 @@ android:screenOrientation="portrait"
 - WMO Weather Code 轉換。
 - API DTO 至領域模型映射。
 - 溫度、風速、降雨及日期格式化。
+- 海平面氣壓、能見度、雲量、UV、AQI 及 PM2.5 分級邊界。
 - 今天、明天、後天及大後天的日期對應與未來三日篩選。
 - API 地點時區、夏令時間及裝置時區不同時的日期與時間轉換。
 - 城市 ID 與缺少 ID 時的替代識別、收藏去重及 20 個上限。
@@ -519,7 +532,7 @@ android:screenOrientation="portrait"
 - 使用者拒絕定位後，仍可搜尋並查看城市天氣。
 - 主畫面清楚顯示現在、明天、後天與大後天資訊。
 - 體感溫度、降雨、風速、日出及日落可正常顯示。
-- 氣壓、目前 UV 及每日最大 UV 可正常顯示；資料缺少時顯示 `--`。
+- 氣壓、能見度、雲量、目前 UV 及每日最大 UV 可正常顯示；資料缺少時顯示 `--`。
 - 可收藏、切換及移除多個城市。
 - 同一城市不可重複收藏，收藏達 20 個時會顯示上限提示，移除目前查看的收藏不會立即清除畫面。
 - App 啟動及下拉操作可更新資料。

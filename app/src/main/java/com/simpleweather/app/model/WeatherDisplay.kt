@@ -76,6 +76,42 @@ fun uvDescription(value: Double?): String? = when {
     else -> "危險級"
 }
 
+fun pressureDescription(value: Double?): String? = when {
+    value == null -> null
+    value < 980.0 -> "強烈低壓 · 可能伴隨強風、豪雨"
+    value < 1011.0 -> "低氣壓 · 多雲、較易降雨"
+    value < 1020.0 -> "接近平均 · 標準海平面約 1013 hPa"
+    value < 1040.0 -> "高氣壓 · 通常晴朗、少雲"
+    else -> "強高氣壓 · 通常穩定、較乾燥"
+}
+
+fun formatVisibility(valueMeters: Double?): String {
+    if (valueMeters == null) return "--"
+    val kilometers = valueMeters.coerceAtLeast(0.0) / 1_000.0
+    return if (kilometers % 1.0 == 0.0) {
+        "${kilometers.toInt()} km"
+    } else {
+        "%.1f km".format(Locale.TAIWAN, kilometers)
+    }
+}
+
+fun visibilityDescription(valueMeters: Double?): String? = when {
+    valueMeters == null -> null
+    valueMeters >= 10_000.0 -> "良好 · 視野清晰"
+    valueMeters >= 5_000.0 -> "普通 · 遠景略受影響"
+    valueMeters >= 1_000.0 -> "不佳 · 行車請留意"
+    else -> "很差 · 視線明顯受限"
+}
+
+fun cloudCoverDescription(value: Int?): String? = when {
+    value == null -> null
+    value <= 20 -> "晴朗"
+    value <= 40 -> "大致晴朗"
+    value <= 60 -> "局部多雲"
+    value <= 80 -> "多雲"
+    else -> "陰天"
+}
+
 fun windForceLabel(speedKmh: Double?): String? {
     val metersPerSecond = speedKmh?.div(3.6) ?: return null
     return when {

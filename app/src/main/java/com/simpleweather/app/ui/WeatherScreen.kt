@@ -28,6 +28,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Air
 import androidx.compose.material.icons.filled.BlurOn
+import androidx.compose.material.icons.filled.Cloud
 import androidx.compose.material.icons.filled.Grain
 import androidx.compose.material.icons.filled.Landscape
 import androidx.compose.material.icons.filled.LocationOn
@@ -40,6 +41,7 @@ import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material.icons.filled.WbSunny
+import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -79,15 +81,19 @@ import com.simpleweather.app.model.Place
 import com.simpleweather.app.model.WeatherBundle
 import com.simpleweather.app.model.WeatherScene
 import com.simpleweather.app.model.aqiDescription
+import com.simpleweather.app.model.cloudCoverDescription
 import com.simpleweather.app.model.formatLocalTime
 import com.simpleweather.app.model.formatSunshineDuration
+import com.simpleweather.app.model.formatVisibility
 import com.simpleweather.app.model.forecastDayLabel
 import com.simpleweather.app.model.futureForecasts
 import com.simpleweather.app.model.localDateTime
 import com.simpleweather.app.model.moonPhaseLabel
 import com.simpleweather.app.model.pm25Description
+import com.simpleweather.app.model.pressureDescription
 import com.simpleweather.app.model.timezoneLabel
 import com.simpleweather.app.model.uvDescription
+import com.simpleweather.app.model.visibilityDescription
 import com.simpleweather.app.model.windForceLabel
 import com.simpleweather.app.model.weatherCondition
 import java.time.Instant
@@ -335,7 +341,9 @@ private fun CurrentDetails(weather: WeatherBundle, now: Instant) {
         WeatherMetric("降雨機率", weather.current.precipitationProbability?.let { "$it%" } ?: "--", Icons.Default.WaterDrop, Color(0xFF25BFD3)),
         WeatherMetric("降雨量", formatRain(weather.current.precipitation), Icons.Default.Grain, Color(0xFF5596EE)),
         WeatherMetric("風速", "${formatNumber(weather.current.windSpeed)} km/h", Icons.Default.Air, Color(0xFF54C2B1), secondary = listOfNotNull(windForceLabel(weather.current.windSpeed), windDirection(weather.current.windDirection).takeIf { it.isNotBlank() }).joinToString(" · ").takeIf { it.isNotBlank() }, secondaryColor = Color(0xFF54C2B1)),
-        WeatherMetric("氣壓", weather.current.pressureMsl?.let { "${formatNumber(it)} hPa" } ?: "--", Icons.Default.Public, Color(0xFF6A9DE8)),
+        WeatherMetric("氣壓", weather.current.pressureMsl?.let { "${formatNumber(it)} hPa" } ?: "--", Icons.Default.Public, pressureColor(weather.current.pressureMsl), secondary = pressureDescription(weather.current.pressureMsl), secondaryColor = pressureColor(weather.current.pressureMsl)),
+        WeatherMetric("能見度", formatVisibility(weather.current.visibilityMeters), Icons.Default.Visibility, visibilityColor(weather.current.visibilityMeters), secondary = visibilityDescription(weather.current.visibilityMeters), secondaryColor = visibilityColor(weather.current.visibilityMeters)),
+        WeatherMetric("雲量", weather.current.cloudCover?.let { "$it%" } ?: "--", Icons.Default.Cloud, Color(0xFF8BA7C7), secondary = cloudCoverDescription(weather.current.cloudCover), secondaryColor = Color(0xFF8BA7C7)),
         WeatherMetric("海拔高度", weather.elevationMeters?.let { "${it.roundToInt()} m" } ?: "--", Icons.Default.Landscape, Color(0xFF4EC98A)),
         WeatherMetric("紫外線", formatNumber(weather.current.uvIndex), Icons.Default.WbSunny, uvColor(weather.current.uvIndex), secondary = uvDescription(weather.current.uvIndex), secondaryColor = uvColor(weather.current.uvIndex)),
         WeatherMetric("日出", formatClock(today?.sunrise), Icons.Default.WbSunny, Color(0xFFFFA726)),
@@ -539,6 +547,23 @@ private fun uvColor(value: Double?): Color = when {
     value < 8.0 -> Color(0xFFFB8C00)
     value < 11.0 -> Color(0xFFE53935)
     else -> Color(0xFF8E24AA)
+}
+
+private fun pressureColor(value: Double?): Color = when {
+    value == null -> Color(0xFFAAB5C7)
+    value < 980.0 -> Color(0xFFE53935)
+    value < 1011.0 -> Color(0xFFFB8C00)
+    value < 1020.0 -> Color(0xFF6A9DE8)
+    value < 1040.0 -> Color(0xFF43A047)
+    else -> Color(0xFF00897B)
+}
+
+private fun visibilityColor(valueMeters: Double?): Color = when {
+    valueMeters == null -> Color(0xFFAAB5C7)
+    valueMeters >= 10_000.0 -> Color(0xFF43A047)
+    valueMeters >= 5_000.0 -> Color(0xFFFBC02D)
+    valueMeters >= 1_000.0 -> Color(0xFFFB8C00)
+    else -> Color(0xFFE53935)
 }
 
 @Composable

@@ -8,7 +8,7 @@
 - GPS 約略定位與城市搜尋替代流程
 - 收藏最多 20 個城市並記住最後選擇
 - 溫度、體感溫度、濕度、降雨、風速、風向與蒲福風級
-- 日出、日落、日照時數、月相、海拔、氣壓、UV 與當地時間
+- 日出、日落、日照時數、月相、海拔、氣壓、能見度、雲量、UV 與當地時間
 - US AQI 與 PM2.5 空氣品質
 - 依當地日出、日落自動切換淺色與深色主題
 - 手繪風格天氣圖示、縮小的黃橘塗鴉太陽 App 圖示與鮮艷靜態天氣背景
@@ -81,7 +81,7 @@ Prerelease 使用獨立套件 ID `com.simpleweather.app.prerelease`，可與正�
 .\gradlew.bat testDebugUnitTest lintDebug assembleDebug
 ```
 
-目前單元測試涵蓋 WMO 天氣代碼、日夜圖示選擇、日出日落邊界、當地時間與時區、月相、AQI、日照格式及未來三日篩選。
+目前單元測試涵蓋 WMO 天氣代碼、日夜圖示選擇、日出日落邊界、當地時間與時區、月相、氣壓、能見度、雲量、AQI、UV、日照格式及未來三日篩選。
 
 ## 文件
 
@@ -92,6 +92,7 @@ Prerelease 使用獨立套件 ID `com.simpleweather.app.prerelease`，可與正�
 - [系統設計](docs/SYSTEM_DESIGN.md)
 - [測試指南](docs/TESTING.md)
 - [隱私說明](docs/PRIVACY.md)
+- [天氣知識教學](docs/WEATHER_KNOWLEDGE.md)
 - [產品規格](SPEC.md)
 - [貢獻指南](CONTRIBUTING.md)
 - [版本紀錄](CHANGELOG.md)

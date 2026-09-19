@@ -37,7 +37,7 @@ GET https://api.open-meteo.com/v1/forecast
 - `temperature_unit=celsius`
 - `wind_speed_unit=kmh`
 - `precipitation_unit=mm`
-- `current`：溫度、體感、濕度、降雨機率、降雨、WMO code、風速、風向、日夜
+- `current`：溫度、體感、濕度、降雨機率、降雨、WMO code、風速、風向、海平面氣壓、能見度、雲量、UV、日夜
 - `daily`：溫度、體感、降雨、日出日落、日照、月相及最大風速
 
 ### 城市搜尋

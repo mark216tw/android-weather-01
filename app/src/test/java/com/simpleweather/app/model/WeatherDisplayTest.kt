@@ -73,6 +73,31 @@ class WeatherDisplayTest {
         assertEquals("危險級", uvDescription(11.0))
     }
 
+    @Test fun `maps sea level pressure descriptions at boundaries`() {
+        assertEquals("強烈低壓 · 可能伴隨強風、豪雨", pressureDescription(979.9))
+        assertEquals("低氣壓 · 多雲、較易降雨", pressureDescription(980.0))
+        assertEquals("接近平均 · 標準海平面約 1013 hPa", pressureDescription(1011.0))
+        assertEquals("高氣壓 · 通常晴朗、少雲", pressureDescription(1020.0))
+        assertEquals("強高氣壓 · 通常穩定、較乾燥", pressureDescription(1040.0))
+    }
+
+    @Test fun `formats and classifies visibility`() {
+        assertEquals("12.4 km", formatVisibility(12_400.0))
+        assertEquals("10 km", formatVisibility(10_000.0))
+        assertEquals("良好 · 視野清晰", visibilityDescription(10_000.0))
+        assertEquals("普通 · 遠景略受影響", visibilityDescription(5_000.0))
+        assertEquals("不佳 · 行車請留意", visibilityDescription(1_000.0))
+        assertEquals("很差 · 視線明顯受限", visibilityDescription(999.0))
+    }
+
+    @Test fun `maps cloud cover descriptions at boundaries`() {
+        assertEquals("晴朗", cloudCoverDescription(20))
+        assertEquals("大致晴朗", cloudCoverDescription(21))
+        assertEquals("局部多雲", cloudCoverDescription(41))
+        assertEquals("多雲", cloudCoverDescription(61))
+        assertEquals("陰天", cloudCoverDescription(81))
+    }
+
     @Test fun `formats sunshine seconds as hours and minutes`() {
         assertEquals("2 小時 30 分", formatSunshineDuration(9_000.0))
     }
