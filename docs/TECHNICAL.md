@@ -33,7 +33,7 @@ GET https://api.open-meteo.com/v1/forecast
 重要參數：
 
 - `timezone=auto`
-- `forecast_days=4`
+- `forecast_days=7`
 - `temperature_unit=celsius`
 - `wind_speed_unit=kmh`
 - `precipitation_unit=mm`
@@ -97,7 +97,7 @@ app/schemas/com.simpleweather.app.data.local.WeatherDatabase/1.json
 - App 進入背景後停止前景自動更新迴圈。
 - 目前時間落在當日日出至日落之間時使用淺色主題，否則使用深色主題。
 - 若日出日落缺值，才降級使用 API `is_day`。
-- 預報以地點當地日期排除今天，再取明天、後天與大後天。
+- 預報以地點當地日期取得今天至未來第六天；標題「今天／明天／後天／大後天／星期X」皆以地點時區計算。
 
 ## 授權與 Attribution
 

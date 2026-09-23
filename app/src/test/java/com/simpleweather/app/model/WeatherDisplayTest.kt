@@ -121,4 +121,16 @@ class WeatherDisplayTest {
         assertEquals("後天", forecastDayLabel(result[1].date, LocalDate.parse("2026-09-17")))
         assertEquals("大後天", forecastDayLabel(result[2].date, LocalDate.parse("2026-09-17")))
     }
+
+    @Test fun `selects today through the next six local forecast days`() {
+        val forecasts = (17..24).map { day ->
+            DailyForecast("2026-09-$day", 0, 30.0, 22.0)
+        }
+        val result = weather.copy(daily = forecasts).forecastDays(Instant.parse("2026-09-17T04:00:00Z"))
+
+        assertEquals(7, result.size)
+        assertEquals("今天", forecastDayLabel(result[0].date, LocalDate.parse("2026-09-17")))
+        assertEquals("星期一", forecastDayLabel(result[4].date, LocalDate.parse("2026-09-17")))
+        assertEquals("星期三", forecastDayLabel(result[6].date, LocalDate.parse("2026-09-17")))
+    }
 }

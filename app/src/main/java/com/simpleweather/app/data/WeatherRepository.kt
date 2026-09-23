@@ -136,7 +136,7 @@ class WeatherRepository(
                 uvIndex = currentDto.uvIndex,
                 isDay = currentDto.isDay != 0,
             ),
-            daily = forecasts.take(4),
+            daily = forecasts.take(7),
             fetchedAtEpochMillis = fetchedAt,
             elevationMeters = elevation,
             airQuality = airQualityResponse?.current?.let {

@@ -10,7 +10,7 @@
 - 首版語言：繁體中文
 - 首版單位：攝氏、公里／小時、毫米
 
-「簡單天氣」以簡單、易用及容易單手操作為核心。App 優先使用裝置 GPS 取得目前位置，並提供城市搜尋作為定位失敗或拒絕權限時的替代方式。主畫面顯示現在、明天、後天與大後天的天氣資訊，搭配依天氣及晝夜變化的動態插畫天空，營造沉浸感。
+「簡單天氣」以簡單、易用及容易單手操作為核心。App 優先使用裝置 GPS 取得目前位置，並提供城市搜尋作為定位失敗或拒絕權限時的替代方式。主畫面顯示現在及未來六天的天氣資訊，搭配依天氣及晝夜變化的靜態天空，營造沉浸感。
 
 ## 2. 首版功能範圍
 
@@ -21,7 +21,7 @@
 - 顯示當下天氣資訊。
 - 顯示明天天氣資訊。
 - 顯示後天天氣資訊。
-- 顯示大後天天氣資訊。
+- 顯示今天至未來第六天天氣資訊。
 - App 開啟時自動更新天氣。
 - 從背景返回前景時，資料年齡達 15 分鐘才自動更新。
 - App 持續在前景時，每 15 分鐘檢查一次；資料未滿 15 分鐘不重複請求。
@@ -87,7 +87,7 @@
 1. 顯示簡短定位用途說明。
 2. 請求前景位置權限，優先接受約略位置。
 3. 權限允許後，先嘗試取得最近位置，再請求目前位置。
-4. 使用座標向 Open-Meteo 取得今天至大後天共四日天氣。
+4. 使用座標向 Open-Meteo 取得今天至未來第六天共七日天氣。
 5. 顯示主畫面。
 
 ### 3.2 定位失敗
@@ -143,10 +143,12 @@
    - 能見度與雲量置於風速與氣壓下一列
    - US AQI、PM2.5、氣壓、紫外線指數
    - 不重複顯示頁首已有的觀測地點及資料時區
-4. 三日預報區域
+4. 七日預報區域
+   - 今天
    - 明天
    - 後天
    - 大後天
+   - 後續三天以「星期X」顯示
 5. 更新資訊
    - 最後更新時間
    - 資料來源 Open-Meteo
@@ -218,7 +220,7 @@ https://api.open-meteo.com/v1/forecast
 latitude={latitude}
 longitude={longitude}
 timezone=auto
-forecast_days=4
+forecast_days=7
 current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_direction_10m,pressure_msl,visibility,cloud_cover,uv_index,is_day
 daily=weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_probability_max,precipitation_sum,sunrise,sunset,sunshine_duration,moon_phase,wind_speed_10m_max,uv_index_max
 ```
@@ -226,14 +228,14 @@ daily=weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_ma
 規則：
 
 - 使用 `timezone=auto` 取得該地點當地時間。
-- 使用 `forecast_days=4` 取得今天至大後天資料；主畫面預報區排除今天，顯示明天、後天與大後天。
+- 使用 `forecast_days=7` 取得今天至未來第六天資料；主畫面預報區顯示今天、明天、後天、大後天及後續三天。
 - 溫度使用攝氏。
 - 風速使用公里／小時。
 - 降雨量使用毫米。
 - WMO Weather Code 需轉換為繁體中文描述、圖示及背景場景。
 - 使用 `is_day` 判斷目前為白天或夜晚。
 - 晴朗（WMO code 0）使用單獨太陽圖示；大致晴朗及局部多雲（WMO code 1、2）使用太陽躲在雲後的圖示。
-- 日期、時間及「今天／明天／後天／大後天」一律以 API 回傳的地點時區為準，不使用裝置目前時區判定。
+- 日期、時間及「今天／明天／後天／大後天／星期X」一律以 API 回傳的地點時區為準，不使用裝置目前時區判定。
 - 保存 API 回傳的 IANA 時區名稱及 UTC offset；領域層以 IANA 時區轉換及格式化時間，UTC offset 僅供資料驗證及降級使用。
 - `current.time`、`daily.time`、`sunrise` 及 `sunset` 皆視為該地點的本地時間。解析時需套用 API 回傳的時區，並正確處理夏令時間。
 - daily 各欄位陣列依日期索引組合；若陣列長度不一致，僅建立所有必要欄位索引皆存在的日期，選填欄位缺少時保留為空值，不得造成 App 崩潰。
@@ -497,7 +499,7 @@ android:screenOrientation="portrait"
 - API DTO 至領域模型映射。
 - 溫度、風速、降雨及日期格式化。
 - 海平面氣壓、能見度、雲量、UV、AQI 及 PM2.5 分級邊界。
-- 今天、明天、後天及大後天的日期對應與未來三日篩選。
+- 今天至未來第六天的日期對應、七日篩選及「星期X」標題。
 - API 地點時區、夏令時間及裝置時區不同時的日期與時間轉換。
 - 城市 ID 與缺少 ID 時的替代識別、收藏去重及 20 個上限。
 - 最近位置的新鮮度、精度、24 小時降級及定位逾時判斷。
@@ -507,7 +509,7 @@ android:screenOrientation="portrait"
 
 ### 13.2 UI 測試
 
-- 顯示目前、明天、後天及大後天天氣。
+- 顯示今天、明天、後天、大後天及後續三天天氣。
 - 下拉更新。
 - 城市搜尋及空結果。
 - 新增、切換及移除收藏城市。
@@ -528,9 +530,9 @@ android:screenOrientation="portrait"
 ## 14. 驗收條件
 
 - App 僅以直式顯示。
-- 使用者允許定位後，可取得所在地今天至大後天共四日天氣。
+- 使用者允許定位後，可取得所在地今天至未來第六天共七日天氣。
 - 使用者拒絕定位後，仍可搜尋並查看城市天氣。
-- 主畫面清楚顯示現在、明天、後天與大後天資訊。
+- 主畫面清楚顯示今天、明天、後天、大後天及後續三天資訊。
 - 體感溫度、降雨、風速、日出及日落可正常顯示。
 - 氣壓、能見度、雲量、目前 UV 及每日最大 UV 可正常顯示；資料缺少時顯示 `--`。
 - 可收藏、切換及移除多個城市。
@@ -539,7 +541,7 @@ android:screenOrientation="portrait"
 - 更新失敗且有快取時，舊資料仍可閱讀。
 - 快取超過 2 小時會標示可能過期，且不同地點的快取不會互相替代。
 - GPS 地名反查失敗時仍可使用座標取得天氣，並顯示「目前位置」。
-- 今天、明天、後天、大後天、日出與日落皆依查詢地點時區顯示，不受裝置時區影響。
+- 今天、明天、後天、大後天、星期標題、日出與日落皆依查詢地點時區顯示，不受裝置時區影響。
 - 天氣及晝夜變化會切換對應靜態背景。
 - 目前天氣資訊可在一般手機螢幕的首個畫面內閱讀，不需為查看目前資料向下滑動。
 - App 圖示符合 Adaptive Icon、安全區及黃橘手繪太陽主題規格。

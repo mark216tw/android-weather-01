@@ -3,6 +3,7 @@ package com.simpleweather.app.model
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.LocalDate
+import java.time.DayOfWeek
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -150,14 +151,33 @@ fun WeatherBundle.futureForecasts(instant: Instant): List<DailyForecast> {
     }.sortedBy { it.first }.take(3).map { it.second }
 }
 
+fun WeatherBundle.forecastDays(instant: Instant): List<DailyForecast> {
+    val today = localDateTime(instant).toLocalDate()
+    return daily.mapNotNull { forecast ->
+        val date = runCatching { LocalDate.parse(forecast.date) }.getOrNull() ?: return@mapNotNull null
+        if (!date.isBefore(today)) date to forecast else null
+    }.sortedBy { it.first }.take(7).map { it.second }
+}
+
 fun forecastDayLabel(date: String, today: LocalDate): String {
     val forecastDate = runCatching { LocalDate.parse(date) }.getOrNull() ?: return date
     return when (ChronoUnit.DAYS.between(today, forecastDate)) {
+        0L -> "今天"
         1L -> "明天"
         2L -> "後天"
         3L -> "大後天"
-        else -> forecastDate.format(DateTimeFormatter.ofPattern("M/d", Locale.TAIWAN))
+        else -> "星期${forecastDate.weekdayName()}"
     }
+}
+
+private fun LocalDate.weekdayName(): String = when (dayOfWeek) {
+    DayOfWeek.MONDAY -> "一"
+    DayOfWeek.TUESDAY -> "二"
+    DayOfWeek.WEDNESDAY -> "三"
+    DayOfWeek.THURSDAY -> "四"
+    DayOfWeek.FRIDAY -> "五"
+    DayOfWeek.SATURDAY -> "六"
+    DayOfWeek.SUNDAY -> "日"
 }
 
 private fun WeatherBundle.zoneId(): ZoneId = runCatching { ZoneId.of(timezone) }.getOrDefault(ZoneOffset.UTC)

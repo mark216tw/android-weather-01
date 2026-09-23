@@ -11,7 +11,7 @@ interface ForecastApi {
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double,
         @Query("timezone") timezone: String = "auto",
-        @Query("forecast_days") forecastDays: Int = 4,
+        @Query("forecast_days") forecastDays: Int = 7,
         @Query("temperature_unit") temperatureUnit: String = "celsius",
         @Query("wind_speed_unit") windSpeedUnit: String = "kmh",
         @Query("precipitation_unit") precipitationUnit: String = "mm",

@@ -86,6 +86,7 @@ import com.simpleweather.app.model.formatLocalTime
 import com.simpleweather.app.model.formatSunshineDuration
 import com.simpleweather.app.model.formatVisibility
 import com.simpleweather.app.model.forecastDayLabel
+import com.simpleweather.app.model.forecastDays
 import com.simpleweather.app.model.futureForecasts
 import com.simpleweather.app.model.localDateTime
 import com.simpleweather.app.model.moonPhaseLabel
@@ -235,7 +236,7 @@ private fun WeatherContent(
     val currentCondition = weatherCondition(weather.current.weatherCode)
     val contentColor = MaterialTheme.colorScheme.onBackground
     val localToday = weather.localDateTime(now).toLocalDate()
-    val futureForecasts = weather.futureForecasts(now)
+    val forecastDays = weather.forecastDays(now)
     LazyColumn(
         modifier = Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding(),
         contentPadding = PaddingValues(start = 12.dp, end = 12.dp, top = 4.dp, bottom = 28.dp),
@@ -317,7 +318,7 @@ private fun WeatherContent(
             }
         }
         item { CurrentDetails(weather, now) }
-        items(futureForecasts) { forecast ->
+        items(forecastDays) { forecast ->
             DailyCard(forecast, forecastDayLabel(forecast.date, localToday))
         }
         item {
