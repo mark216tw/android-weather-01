@@ -15,7 +15,7 @@ android {
         minSdk = 26
         targetSdk = 36
         versionCode = 6
-        versionName = "1.0.0"
+        versionName = "1.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -26,7 +26,7 @@ android {
         create("prerelease") {
             initWith(getByName("debug"))
             applicationIdSuffix = ".prerelease"
-            versionNameSuffix = "-prerelease.3"
+            versionNameSuffix = "-prerelease"
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))

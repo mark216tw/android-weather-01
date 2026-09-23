@@ -2,6 +2,13 @@
 
 本文件記錄使用者可見的重要變更，格式參考 [Keep a Changelog](https://keepachangelog.com/zh-TW/1.1.0/)。
 
+## [1.1.0-prerelease] - 2026-09-19
+
+### 改善
+
+- APP 圖示改為附圖風格的連續尖角黃色日芒，中央保留黃橘手繪同心圓。
+- prerelease 版本升級為 `1.1.0-prerelease`。
+
 ## [1.0.0-prerelease.3] - 2026-09-19
 
 ### 新增
